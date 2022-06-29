@@ -10,7 +10,9 @@ body {
   height: 100vh;
   display: grid;
   place-items: center;
-  background-color: black;
+  background-image: url('https://telegra.ph/file/cac7c55d6299708f42f63.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .page-wrapper {
@@ -20,7 +22,7 @@ body {
 }
 
 h1 {
-  color: white;
+  color: green;
   font-family: "Source Sans Pro", sans-serif;
   font-size: 5em;
   letter-spacing: -0.04em;
@@ -38,7 +40,7 @@ p {
 }
 
 .icon {
-  color: white;
+  color: red;
   padding: 15px;
   border-radius: 50%;
 }
