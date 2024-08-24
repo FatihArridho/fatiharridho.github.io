@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Happy Birthday!</title>
+  <link rel="stylesheet" href="styles/flexbox-center-container.css" media="all">
+  <link rel="stylesheet" href="styles/system-fonts.css" media="all">
+  <link rel="stylesheet" href="styles/style.css" media="all">
+</head>
+
+<body>
+  <canvas id=c></canvas>
+  <canvas id="confetti"></canvas>
+  <div class="container" id="count">
+    <h1 id="head">Countdown to my birthday! :D</h1>
+    <ul>
+      <li><span id="day"></span>hari</li>
+      <li><span id="hour"></span>jam</li>
+      <li><span id="minute"></span>menit</li>
+      <li><span id="second"></span>detik</li>
+    </ul>
+  </div>
+  <div id="merrywrap" class="merrywrap">
+    <canvas id="snowfall"></canvas>
+    <div class="giftbox">
+      <div class="cover">
+        <div></div>
+      </div>
+      <div class="box"></div>
+    </div>
+    <audio id="audio-player" loop>
+      <source src="https://files.catbox.moe/vvap5o.mp3" type="audio/mp3">
+    </audio>
+  </div>
+</body>
+<script src="scripts/confetti.min.js" charset="utf-8"></script>
+<script src="scripts/index.js" charset="utf-8"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var box = document.querySelector('.giftbox');
+    var audio = document.getElementById('audio-player');
+
+    function playAudio() {
+      if (audio.paused) {
+        audio.play().catch(function(error) {
+          console.error("Audio playback failed:", error);
+        });
+      }
+    }
+
+    box.addEventListener('click', playAudio);
+  });
+</script>
+</html>
