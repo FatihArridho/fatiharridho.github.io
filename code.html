@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Editor with HTML Runner, Particle Effect, and Terminal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material-darker.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            height: 100vh;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            overflow: hidden;
+        }
+
+        #loading-screen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: #1e1e1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+            z-index: 100;
+        }
+
+        #editor-container {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #editor {
+            height: 65%;
+        }
+
+        #terminal {
+            height: 20%;
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 14px;
+            border: 2px solid #007acc; /* Border stroke */
+            box-shadow: 0 0 10px rgba(0, 122, 204, 0.7); /* Glow effect */
+        }
+
+        button {
+            background-color: #007acc;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #005a9e;
+        }
+
+        select {
+            margin: 10px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #444;
+        }
+
+        #terminal-info {
+            color: #ffcc00;
+            font-size: 14px;
+            padding-left: 10px;
+            margin-top: 5px;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div>
+            <p>Selamat Datang di Editor Kode</p>
+            <p>Memuat Editor...</p>
+        </div>
+    </div>
+
+    <!-- Editor and Terminal -->
+    <div id="editor-container">
+        <div>
+            <label for="language">Pilih Bahasa: </label>
+            <select id="language" onchange="changeLanguage()">
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="clike">C/C++</option>
+                <option value="php">PHP</option>
+                <option value="htmlmixed">HTML</option>
+                <option value="bash">Bash</option>
+            </select>
+            <button onclick="runCode()">Run Code</button>
+        </div>
+
+        <!-- Editor -->
+        <textarea id="editor"></textarea>
+
+        <!-- Terminal Info -->
+        <div id="terminal-info">Terminal ini hanya mendukung JavaScript. Bahasa lain akan disimulasikan.</div>
+
+        <!-- Terminal -->
+        <div id="terminal"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/php/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/shell/shell.min.js"></script>
+
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+            lineNumbers: true,
+            theme: 'material-darker',
+            mode: 'javascript', // Default mode
+        });
+
+        // Loading screen delay
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('editor-container').style.display = 'flex';
+            }, 3000); // 3 seconds delay for loading
+        };
+
+        // Particle effect setup
+        particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/demo/particles.json', function() {
+            console.log('Particles.js loaded.');
+        });
+
+        function changeLanguage() {
+            const language = document.getElementById('language').value;
+            let mode = 'javascript';
+
+            switch (language) {
+                case 'python':
+                    mode = 'python';
+                    break;
+                case 'clike':
+                    mode = 'text/x-csrc'; // for C/C++
+                    break;
+                case 'php':
+                    mode = 'application/x-httpd-php';
+                    break;
+                case 'htmlmixed':
+                    mode = 'htmlmixed';
+                    break;
+                case 'bash':
+                    mode = 'shell'; // Bash mode
+                    break;
+                default:
+                    mode = 'javascript';
+            }
+
+            editor.setOption('mode', mode);
+        }
+
+        function runCode() {
+            const code = editor.getValue();
+            const language = document.getElementById('language').value;
+            const terminal = document.getElementById('terminal');
+            terminal.innerHTML = ''; // Clear terminal
+
+            try {
+                if (language === 'javascript') {
+                    let result = eval(code);
+                    terminal.innerHTML = result || 'JavaScript executed successfully';
+                } else if (language === 'bash') {
+                    terminal.innerHTML = 'Simulating Bash script execution: \n' + code;
+                } else if (language === 'python') {
+                    terminal.innerHTML = 'Python execution simulated.';
+                } else if (language === 'clike') {
+                    terminal.innerHTML = 'C/C++ execution simulated.';
+                } else if (language === 'php') {
+                    terminal.innerHTML = 'PHP execution simulated.';
+                } else if (language === 'htmlmixed') {
+                    // Open HTML code in new window
+                    let htmlWindow = window.open();
+                    htmlWindow.document.write(code);
+                    htmlWindow.document.close();
+                    terminal.innerHTML = 'HTML opened in new window.';
+                }
+            } catch (error) {
+                terminal.innerHTML = error;
+            }
+        }
+    </script>
+</body>
+</html>
